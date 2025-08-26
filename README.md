@@ -406,27 +406,4 @@ CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8001"]
 - `GET /reports/summary`
 - `POST /simulate/cardTap`
 
-## 📚 Additional Resources
 
-- **FastAPI Documentation**: https://fastapi.tiangolo.com/
-- **SQLAlchemy Documentation**: https://docs.sqlalchemy.org/
-- **React Documentation**: https://react.dev/
-- **PostgreSQL**: https://www.postgresql.org/
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Test thoroughly (including CRM integration)
-5. Submit a pull request
-
-## 📄 License
-
-This project is proprietary software. All rights reserved.
-
----
-
-**Need Help?** Check the troubleshooting section or create an issue in the repository.
-
-**Important**: Ensure the CRM backend is running and accessible before testing POS operations. 
