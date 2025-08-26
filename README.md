@@ -1,272 +1,432 @@
-# 🏪 POS (Point of Sale) System
+# POS Application
 
-A comprehensive Point of Sale system designed for transit fare management, card issuance, and customer service operations. Built with React frontend and FastAPI backend, this system provides a complete solution for managing transit cards, processing payments, and handling customer interactions.
+A Point of Sale system for transit card operations, built with FastAPI backend and React frontend. The POS system acts as a proxy to the CRM backend, providing standardized responses and additional logging.
 
-## 🚀 Features
+## 🏗️ Architecture
 
-### 💳 Card Management
-- **Issue New Cards**: Create and print new transit cards with various media types
-- **Register Cards**: Link cards to customer accounts with detailed information
-- **Reload Cards**: Add value to existing cards with multiple payment methods
-- **Balance Checking**: Real-time card balance verification via NFC tap or manual entry
-
-### 🛍️ Product Management
-- **Transit Passes**: 7-Day and 30-Day unlimited ride passes
-- **Stored Value**: Add cash value to cards for pay-per-ride usage
-- **Multiple Payment Methods**: Support for cash and credit/debit card payments
-- **Receipt Generation**: Automatic receipt printing and digital copies
-
-### 👥 Customer Management
-- **Customer Lookup**: Search and view customer information by ID
-- **Customer Registration**: Link cards to customer profiles
-- **Transaction History**: View complete transaction records
-
-### 📊 Reporting & Analytics
-- **System Reports**: Comprehensive dashboard with key metrics
-- **Transaction Tracking**: Detailed logs of all POS operations
-- **Performance Analytics**: Monitor system usage and trends
-
-### 🔐 Security & Authentication
-- **User Authentication**: Secure login system with session management
-- **API Key Protection**: All backend endpoints protected with API keys
-- **Role-based Access**: Different permission levels for users
-
-## 🛠️ Technology Stack
-
-### Frontend
-- **React 18.2.0**: Modern UI framework with hooks
-- **React Router DOM 6.30.1**: Client-side routing
-- **Vite 4.0.0**: Fast build tool and development server
-- **Axios 1.6.0**: HTTP client for API communication
-- **FontAwesome 6.5.0**: Icon library
-- **React Icons 4.12.0**: Additional icon components
-
-### Backend
-- **FastAPI**: Modern Python web framework
-- **SQLAlchemy**: Database ORM
-- **PostgreSQL**: Primary database (with SQLite fallback)
-- **Uvicorn**: ASGI server
-- **Pydantic**: Data validation
-- **Python-Jose**: JWT authentication
-- **Passlib**: Password hashing
-
-### Infrastructure
-- **Render**: Cloud deployment platform
-- **PostgreSQL**: Cloud database hosting
-- **CORS**: Cross-origin resource sharing enabled
+- **Backend**: FastAPI + SQLAlchemy + PostgreSQL
+- **Frontend**: React + JavaScript + CSS Modules
+- **Database**: PostgreSQL (with POSLog for audit trails)
+- **Proxy**: Acts as gateway to CRM backend with standardized response format
+- **Authentication**: API key-based security
 
 ## 📁 Project Structure
 
 ```
 POS/
 ├── backend/                 # FastAPI backend
-│   ├── main.py             # Main application entry point
-│   ├── api.py              # API route definitions
-│   ├── models.py           # Database models
-│   ├── database.py         # Database configuration
+│   ├── __init__.py
+│   ├── main.py             # FastAPI app entry point
+│   ├── api.py              # Main API routes and logic
+│   ├── models.py           # SQLAlchemy database models
+│   ├── database.py         # Database connection and session
+│   ├── test_api.py         # API testing utilities
 │   ├── requirements.txt    # Python dependencies
 │   ├── env.example         # Environment variables template
-│   └── render.yaml         # Deployment configuration
+│   └── render.yaml         # Render deployment configuration
 ├── src/                    # React frontend
-│   ├── components/         # React components
-│   │   ├── HomeDashboard.jsx
-│   │   ├── IssueCardForm.jsx
-│   │   ├── AddProduct.jsx
-│   │   ├── Login.jsx
-│   │   └── ... (other components)
-│   ├── context/           # React context providers
-│   │   └── AuthContext.jsx
-│   ├── services/          # API service functions
-│   │   └── api.js
-│   ├── App.jsx           # Main application component
-│   └── index.jsx         # Application entry point
-├── package.json          # Node.js dependencies
-└── index.html           # HTML template
+│   ├── components/         # UI components
+│   │   ├── AddProduct*.jsx # Product management components
+│   │   ├── CardBalance.jsx # Card balance checking
+│   │   ├── CustomerLookup.jsx # Customer search
+│   │   ├── IssueCardForm.jsx # Card issuance
+│   │   ├── Login.jsx       # Authentication
+│   │   ├── Reports.jsx     # Reporting interface
+│   │   └── Sidebar.jsx     # Navigation
+│   ├── context/            # React context providers
+│   │   └── AuthContext.jsx # Authentication state
+│   ├── services/           # API service layer
+│   │   └── api.js          # Axios-based API client
+│   ├── App.jsx             # Main app component
+│   └── index.jsx           # Entry point
+├── package.json            # Node.js dependencies
+└── README.md               # This file
 ```
 
 ## 🚀 Quick Start
 
 ### Prerequisites
-- Node.js 16+ and npm
-- Python 3.8+
-- PostgreSQL (or SQLite for development)
 
-### Frontend Setup
+- **Python 3.11+**
+- **Node.js 18+**
+- **npm or yarn**
+- **PostgreSQL** (recommended)
+- **CRM Backend** running (required for POS operations)
 
-1. **Install dependencies**
-   ```bash
-   npm install
-   ```
+### 1. Backend Setup
 
-2. **Start development server**
-   ```bash
-   npm run dev
-   ```
-
-3. **Build for production**
-   ```bash
-   npm run build
-   ```
-
-### Backend Setup
-
-1. **Navigate to backend directory**
-   ```bash
-   cd backend
-   ```
-
-2. **Create virtual environment**
-   ```bash
-   python -m venv venv
-   source venv/bin/activate  # On Windows: venv\Scripts\activate
-   ```
-
-3. **Install dependencies**
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-4. **Set up environment variables**
-   ```bash
-   cp env.example .env
-   # Edit .env with your configuration
-   ```
-
-5. **Start the server**
-   ```bash
-   python main.py
-   # Or with uvicorn directly:
-   uvicorn main:app --host 0.0.0.0 --port 8001 --reload
-   ```
-
-## ⚙️ Configuration
-
-### Environment Variables
-
-Create a `.env` file in the backend directory:
-
-```env
-# Database
-DATABASE_URL=postgresql://postgres:password@localhost:5432/pos_db
-
-# API Keys
-POS_API_KEY=pos_secret_key
-CRM_API_KEY=mysecretkey
-
-# CRM Backend URL
-CRM_BASE_URL=https://crm-n577.onrender.com
-
-# Server Configuration
-PORT=8001
-HOST=0.0.0.0
+#### Clone and Navigate
+```bash
+cd POS/backend
 ```
 
-### Frontend Configuration
+#### Create Virtual Environment
+**Windows:**
+```bash
+python -m venv .venv
+.\.venv\Scripts\activate
+```
 
-Update the API base URL in `src/components/api.js`:
+**macOS/Linux:**
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+```
 
-```javascript
-const BASE_URL = "http://127.0.0.1:8000";  // Development
-// const BASE_URL = "https://your-production-url.com";  // Production
+#### Install Dependencies
+```bash
+pip install -r requirements.txt
+```
+
+#### Environment Configuration
+Create a `.env` file in `POS/backend/`:
+```env
+# Database
+DATABASE_URL=postgresql://username:password@localhost:5432/pos_db
+
+# CRM Backend Configuration
+CRM_BASE_URL=http://127.0.0.1:8000
+CRM_API_KEY=your_crm_api_key_here
+
+# POS API Security
+POS_API_KEY=your_pos_api_key_here
+```
+
+#### Initialize Database
+```bash
+# Create tables and schema
+python -c "from database import engine, Base; Base.metadata.create_all(bind=engine)"
+```
+
+#### Run Backend Server
+```bash
+python -m uvicorn main:app --reload --port 8001
+```
+
+**Backend will be available at:**
+- API Base: `http://127.0.0.1:8001`
+- Swagger Docs: `http://127.0.0.1:8001/docs`
+- ReDoc: `http://127.0.0.1:8001/redoc`
+- Health Check: `http://127.0.0.1:8001/health`
+
+### 2. Frontend Setup
+
+#### Navigate to Frontend Directory
+```bash
+cd POS
+```
+
+#### Install Dependencies
+```bash
+npm install
+```
+
+#### Run Development Server
+```bash
+npm start
+# or
+npm run dev
+```
+
+**Frontend will be available at:**
+- `http://localhost:3000` (React default port)
+
+#### Build for Production
+```bash
+npm run build
+```
+
+## 🗄️ Database Models
+
+### Core Entities
+
+- **POSLog**: Audit trail for all POS operations
+  - `operation`: Type of operation performed
+  - `card_id`: Card involved in operation
+  - `customer_id`: Customer involved
+  - `amount`: Transaction amount
+  - `status`: Operation result
+  - `transaction_id`: Unique transaction identifier
+  - `robot_run_id`: Automation run identifier
+  - `timestamp`: When operation occurred
+  - `details`: Additional operation details
+
+### Database Schema
+```sql
+-- POS Logs table
+pos_logs:
+  - id (PK): Auto-incrementing integer
+  - operation: "issue_card", "reload", "add_product", etc.
+  - card_id: "4716000000000001"
+  - customer_id: "CUST000001"
+  - amount: "25.00"
+  - status: "success" or "error"
+  - transaction_id: "uuid-string"
+  - robot_run_id: "optional-automation-id"
+  - timestamp: "2024-01-15T10:30:00Z"
+  - details: "Card issued successfully"
 ```
 
 ## 🔌 API Endpoints
 
-### Authentication
-- `POST /auth/login` - User login
-- `POST /auth/signup` - User registration
+### Security
+All endpoints require header: `x-api-key: <POS_API_KEY>`
 
-### Card Operations
-- `POST /api/cards/issue` - Issue new card
-- `POST /api/cards/{id}/reload` - Reload card balance
-- `GET /api/cards/{id}/balance` - Get card balance
-- `GET /api/cards/{id}/transactions` - Get card transactions
-
-### Product Management
-- `POST /api/cards/{id}/products` - Add product to card
+### Core Operations
+- `POST /api/cards/issue` - Issue new transit card
+- `POST /api/cards/{card_id}/reload` - Add funds to card
+- `POST /api/cards/{card_id}/products` - Add transit products
+- `GET /api/cards/{card_id}/balance` - Check card balance
 - `POST /api/payment/simulate` - Simulate payment processing
 
-### Customer Management
-- `GET /api/customers/{id}` - Get customer information
+### Customer Operations
+- `GET /api/customers/{customer_id}` - Get customer information
 
-### Reporting
-- `GET /api/reports/summary` - Get system reports summary
+### Transaction Operations
+- `GET /api/cards/{card_id}/transactions` - Get card transaction history
+- `GET /api/reports/summary` - Get system summary reports
 
 ### Simulation
-- `POST /api/simulate/cardTap` - Simulate card tap events
+- `POST /api/simulate/cardTap` - Simulate card tap event
 
-## 🎯 Usage Guide
+### System
+- `GET /health` - Health check endpoint
+- `GET /` - Root endpoint with available operations
 
-### Basic Workflow
+## 🔄 Response Format
 
-1. **Login**: Access the system with your credentials
-2. **Dashboard**: View main menu options and system status
-3. **Card Operations**: Issue, reload, or check card balances
-4. **Product Sales**: Add transit passes or stored value to cards
-5. **Customer Service**: Look up customer information and manage accounts
-6. **Reporting**: Generate reports and view analytics
+All POS endpoints return standardized responses:
 
-### Key Features
+```json
+{
+  "status": "success" | "error",
+  "timestamp": "2024-01-15T10:30:00Z",
+  "transactionId": "uuid-string",
+  "robotRunId": "optional-automation-id",
+  "message": "Operation description",
+  "data": {
+    // Operation-specific data
+  }
+}
+```
 
-- **NFC Card Reading**: Tap cards on reader for instant identification
-- **Multiple Payment Methods**: Support for cash and card payments
-- **Receipt Printing**: Automatic receipt generation for all transactions
-- **Real-time Updates**: Live balance and transaction updates
-- **Error Handling**: Comprehensive error messages and recovery options
+## 🧪 Testing
 
-## 🚀 Deployment
+### Backend Testing
+```bash
+cd POS/backend
 
-### Render Deployment
+# Test health endpoint
+curl http://127.0.0.1:8001/health
 
-The backend is configured for deployment on Render:
+# Test API key authentication
+curl -H "x-api-key: your_pos_api_key" http://127.0.0.1:8001/
 
-1. **Connect Repository**: Link your GitHub repository to Render
-2. **Environment Variables**: Set required environment variables
-3. **Build Command**: `pip install -r requirements.txt`
-4. **Start Command**: `uvicorn main:app --host 0.0.0.0 --port $PORT`
+# Test without API key (should fail)
+curl http://127.0.0.1:8001/
+```
 
-### Frontend Deployment
+### API Testing Script
+```bash
+cd POS/backend
 
-Deploy the React frontend to any static hosting service:
+# Run comprehensive API tests
+python test_api.py
+```
 
-1. **Build**: `npm run build`
-2. **Upload**: Deploy the `dist` folder to your hosting service
-3. **Configure**: Update API endpoints for production
+### Frontend Testing
+1. Open `http://localhost:3000` in browser
+2. Navigate through different components
+3. Test card operations
+4. Verify API calls in browser dev tools
 
-## 🔧 Development
+### Integration Testing
+```bash
+# Ensure CRM backend is running on port 8000
+curl http://127.0.0.1:8000/
 
-### Adding New Features
+# Test POS proxy to CRM
+curl -H "x-api-key: your_pos_api_key" \
+     -H "Content-Type: application/json" \
+     -d '{"card_id":"4716000000000001","amount":25.0}' \
+     http://127.0.0.1:8001/api/cards/4716000000000001/reload
+```
 
-1. **Backend**: Add new endpoints in `backend/api.py`
-2. **Frontend**: Create new components in `src/components/`
-3. **Database**: Update models in `backend/models.py`
-4. **Testing**: Add tests in `backend/test_api.py`
+## 🔧 Configuration
 
-### Code Style
+### Backend Configuration
+- **Database**: Configure via `DATABASE_URL` environment variable
+- **CRM Integration**: Set `CRM_BASE_URL` and `CRM_API_KEY`
+- **POS Security**: Set `POS_API_KEY` for endpoint protection
+- **CORS**: Configured for development (allows all origins)
 
-- **Frontend**: Use functional components with hooks
-- **Backend**: Follow FastAPI best practices
-- **Database**: Use SQLAlchemy ORM patterns
-- **API**: RESTful design with consistent response formats
+### Frontend Configuration
+- **API Base URL**: Configured to call POS backend
+- **Authentication**: API key-based via headers
+- **Routing**: Component-based navigation
 
-## 🐛 Troubleshooting
+## 🚨 Troubleshooting
 
 ### Common Issues
 
-1. **Database Connection**: Check DATABASE_URL in environment variables
-2. **API Key Errors**: Verify POS_API_KEY and CRM_API_KEY are set correctly
-3. **CORS Issues**: Ensure CORS middleware is properly configured
-4. **Port Conflicts**: Check if ports 5173 (frontend) and 8001 (backend) are available
+#### POS Backend Won't Start
+```bash
+# Check if port 8001 is available
+netstat -an | grep 8001
 
-### Error Messages
+# Check Python version
+python --version
 
-- **"Invalid API key"**: Check your API key configuration
-- **"Database connection failed"**: Verify database URL and credentials
-- **"Card not found"**: Ensure card exists in the system
-- **"Payment failed"**: Check payment method and transaction details
+# Verify virtual environment
+which python
+```
 
+#### CRM Connection Issues
+```bash
+# Test CRM connectivity
+curl http://127.0.0.1:8000/
 
+# Verify CRM_BASE_URL and CRM_API_KEY
+echo $CRM_BASE_URL
+echo $CRM_API_KEY
+```
+
+#### Database Connection Issues
+```bash
+# Test database connection
+python -c "from database import engine; print(engine.url)"
+
+# Recreate database schema
+python -c "from database import engine, Base; Base.metadata.create_all(bind=engine)"
+```
+
+#### Frontend Build Issues
+```bash
+# Clear npm cache
+npm cache clean --force
+
+# Remove node_modules and reinstall
+rm -rf node_modules package-lock.json
+npm install
+```
+
+#### API Authentication Errors
+- Verify `x-api-key` header is sent
+- Check `POS_API_KEY` environment variable
+- Ensure backend is running on correct port
+
+### Debug Mode
+```bash
+# Backend with debug logging
+python -m uvicorn main:app --reload --port 8001 --log-level debug
+
+# Frontend with verbose logging
+npm start -- --verbose
+```
+
+## 📊 Monitoring
+
+### Health Checks
+- Backend: `GET /health`
+- CRM Integration: Verify CRM backend connectivity
+- Database: Check connection status
+
+### Logs
+- Backend: FastAPI logging
+- Database: POSLog table for audit trails
+- Frontend: Browser console logs
+
+### Audit Trail
+All operations are logged to the `POSLog` table with:
+- Operation type and details
+- Success/failure status
+- Transaction IDs for tracking
+- Timestamps for chronological analysis
+
+## 🚀 Deployment
+
+### Production Considerations
+1. **Environment Variables**: Set all secrets via environment
+2. **Database**: Use PostgreSQL with proper credentials
+3. **CRM Integration**: Ensure CRM backend is accessible
+4. **CORS**: Restrict to production domains
+5. **Logging**: Enable structured logging
+6. **Security**: Rotate API keys regularly
+
+### Render Deployment
+The project includes `render.yaml` for easy deployment:
+
+```yaml
+services:
+  - type: web
+    name: pos-backend
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: DATABASE_URL
+        value: postgresql://...
+      - key: CRM_BASE_URL
+        value: https://crm-backend.onrender.com
+      - key: CRM_API_KEY
+        sync: false
+      - key: POS_API_KEY
+        sync: false
+```
+
+### Docker (Optional)
+```dockerfile
+# Example Dockerfile for backend
+FROM python:3.11-slim
+WORKDIR /app
+COPY requirements.txt .
+RUN pip install -r requirements.txt
+COPY . .
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8001"]
+```
+
+## 🔗 CRM Integration
+
+### How It Works
+1. POS receives requests from frontend
+2. POS validates `x-api-key` header
+3. POS forwards request to CRM backend
+4. CRM processes the operation
+5. POS wraps CRM response in standardized format
+6. POS logs the operation to `POSLog` table
+
+### Required CRM Endpoints
+- `POST /cards/issue`
+- `POST /cards/{id}/reload`
+- `POST /cards/{id}/products`
+- `GET /cards/{id}/balance`
+- `POST /payment/simulate`
+- `GET /customers/{id}`
+- `GET /cards/{id}/transactions`
+- `GET /reports/summary`
+- `POST /simulate/cardTap`
+
+## 📚 Additional Resources
+
+- **FastAPI Documentation**: https://fastapi.tiangolo.com/
+- **SQLAlchemy Documentation**: https://docs.sqlalchemy.org/
+- **React Documentation**: https://react.dev/
+- **PostgreSQL**: https://www.postgresql.org/
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Test thoroughly (including CRM integration)
+5. Submit a pull request
+
+## 📄 License
+
+This project is proprietary software. All rights reserved.
 
 ---
 
-**Built with ❤️ for efficient transit management** 
+**Need Help?** Check the troubleshooting section or create an issue in the repository.
+
+**Important**: Ensure the CRM backend is running and accessible before testing POS operations. 
